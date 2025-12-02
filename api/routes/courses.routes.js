@@ -1,4 +1,5 @@
 import express from 'express';
+import Course from '../models/course.model.js';
 
 const router = express.Router();
 
@@ -44,9 +45,9 @@ router.get('/courses', async (req, res) => {
 
     const total = await Course.countDocuments(match);
 
-    res.json({ total, count: courses.length, courses });
-  } catch (error) {}
-
-  res.send({ message: 'coureses are loading...' });
+    res.send({ total, count: courses.length, courses });
+  } catch (error) {
+    res.send({ message: 'failed' });
+  }
 });
 export default router;
