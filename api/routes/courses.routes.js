@@ -56,10 +56,13 @@ router.get('/courses/featured', async (req, res) => {
     const featuredCourses = await Course.find()
       .sort({ createdAt: -1 })
       .limit(8);
-    const result = featuredCourses.toArray();
-    res.send(result);
+
+    res.json({
+      courses: featuredCourses,
+    });
   } catch (error) {
-    res.send({ message: 'something went wrong' });
+    console.error(error);
+    res.status(500).json({ message: 'Something went wrong' });
   }
 });
 export default router;
