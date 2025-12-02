@@ -40,8 +40,14 @@ const courseSchema = new mongoose.Schema(
     ],
 
     instructor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+      },
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+      avatar: { type: String, required: true },
     },
   },
   { timestamps: true }
