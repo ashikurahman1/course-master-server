@@ -19,16 +19,19 @@ const courseSchema = new mongoose.Schema(
     },
 
     duration: {
-      type: String, // e.g., "3 months"
+      type: String,
       required: true,
     },
 
-    level: {
+    category: {
       type: String,
-      enum: ['Beginner', 'Intermediate', 'Advanced'],
-      default: 'Beginner',
+      enum: ['Programming', 'Design', 'Marketing', 'Business', 'Other'],
+      required: true,
     },
-
+    image: {
+      type: String,
+      required: true,
+    },
     syllabus: [
       {
         topic: { type: String, required: true },

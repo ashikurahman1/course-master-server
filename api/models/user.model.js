@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: '',
+      default: 'https://i.ibb.co/5GzXkwq/user.png',
     },
     enrolledCourses: [
       {
