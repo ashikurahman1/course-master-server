@@ -1,8 +1,13 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 dotenv.config();
-const cors = require('cors');
-const mongoose = require('mongoose');
-const express = require('express');
+import cors from 'cors';
+import mongoose from 'mongoose';
+import express from 'express';
+
+import adminRoutes from './routes/admin.routes.js';
+import studentRoutes from './routes/student.route.js';
+import authRoutes from './routes/auth.routes.js';
+
 const app = express();
 const port = 3000;
 
@@ -15,16 +20,16 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
-    app.get('/', (req, res) => {
-      res.send({ message: 'The data is loading...' });
-    });
-
-    // Users related API
-
-    app.listen(port, () => {
-      console.log(`Course Master is Running on port ${port}`);
-    });
   })
   .catch(error => {
     console.log(error);
   });
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/student', studentRoutes);
+
+app.listen(port, () => {
+  console.log(`Course Master is Running on port ${port}`);
+});
