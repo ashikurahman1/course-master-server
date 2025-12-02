@@ -19,6 +19,8 @@ mongoose
       res.send({ message: 'The data is loading...' });
     });
 
+    // Users related API
+
     app.listen(port, () => {
       console.log(`Course Master is Running on port ${port}`);
     });
