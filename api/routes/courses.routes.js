@@ -9,7 +9,7 @@ router.get('/courses', async (req, res) => {
       limit = 8,
       skip = 0,
       sort = 'price',
-      order = 'esc',
+      order = 'asc',
       search = '',
       category,
     } = req.query;
@@ -23,7 +23,8 @@ router.get('/courses', async (req, res) => {
     if (search) {
       match.$or = [
         { title: { $regex: search, $options: 'i' } },
-        { instructor: { $regex: search, $options: 'i' } },
+        { 'instructor.name': { $regex: search, $options: 'i' } },
+        { 'instructor.email': { $regex: search, $options: 'i' } },
       ];
     }
     if (category) {
@@ -51,6 +52,21 @@ router.get('/courses', async (req, res) => {
   }
 });
 
+router.get('/courses/featured', async (req, res) => {
+  try {
+    const featuredCourses = await Course.find()
+      .sort({ createdAt: -1 })
+      .limit(8);
+
+    res.json({
+      courses: featuredCourses,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Something went wrong' });
+  }
+});
+
 router.get('/courses/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -65,21 +81,6 @@ router.get('/courses/:id', async (req, res) => {
     res
       .status(500)
       .json({ message: 'Failed to get course', error: error.message });
-  }
-});
-
-router.get('/courses/featured', async (req, res) => {
-  try {
-    const featuredCourses = await Course.find()
-      .sort({ createdAt: -1 })
-      .limit(8);
-
-    res.json({
-      courses: featuredCourses,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Something went wrong' });
   }
 });
 export default router;
