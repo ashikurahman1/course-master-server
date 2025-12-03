@@ -2,16 +2,8 @@ import express from 'express';
 import { protect, adminOnly } from '../middleware/auth.middleware.js';
 import Course from '../models/course.model.js';
 import Enrollment from '../models/enrollment.model.js';
-
+import User from '../models/user.model.js';
 const router = express.Router();
-
-// Admin Route
-router.get('/dashboard', protect, adminOnly, (req, res) => {
-  res.json({
-    message: 'Welcome Admin! This is your dashboard.',
-    user: req.user,
-  });
-});
 
 router.post('/create-course', protect, adminOnly, async (req, res) => {
   try {
@@ -98,4 +90,34 @@ router.get('/course/:id/enrollments', async (req, res) => {
     res.status(500).json({ message: 'Unable to load enrollments' });
   }
 });
+
+router.get('/dashboard', protect, adminOnly, async (req, res) => {
+  try {
+    const totalStudents = await User.countDocuments({ role: 'student' });
+    const totalCourses = await Course.countDocuments();
+    const totalEnrollments = await Enrollment.countDocuments();
+
+    // Count of running batches
+    const courses = await Course.find();
+    let totalRunningBatches = 0;
+    courses.forEach(course => {
+      if (course.batches) {
+        totalRunningBatches += course.batches.filter(
+          b => b.status === 'ongoing'
+        ).length;
+      }
+    });
+
+    res.json({
+      totalStudents,
+      totalCourses,
+      totalEnrollments,
+      totalRunningBatches,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Failed to fetch dashboard stats' });
+  }
+});
+
 export default router;

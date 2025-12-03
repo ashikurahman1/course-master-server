@@ -38,7 +38,12 @@ const courseSchema = new mongoose.Schema(
         details: { type: String, required: true },
       },
     ],
-
+    modules: [
+      {
+        title: { type: String, required: true },
+        videoUrl: { type: String, required: true },
+      },
+    ],
     instructor: {
       id: {
         type: mongoose.Schema.Types.ObjectId,

@@ -15,11 +15,13 @@ const enrollmentSchema = new mongoose.Schema(
     batch: {
       type: String,
     },
+    progress: { type: Number, default: 0 },
     status: {
       type: String,
       enum: ['pending', 'active', 'completed'],
       default: 'active',
     },
+    completedLessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }],
   },
   { timestamps: true }
 );
