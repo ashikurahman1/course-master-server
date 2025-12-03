@@ -1,6 +1,7 @@
 import express from 'express';
 import { protect, adminOnly } from '../middleware/auth.middleware.js';
 import Course from '../models/course.model.js';
+import Enrollment from '../models/enrollment.model.js';
 
 const router = express.Router();
 
@@ -85,4 +86,16 @@ router.patch('/update-course/:id', protect, adminOnly, async (req, res) => {
   }
 });
 
+router.get('/course/:id/enrollments', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const enrollments = await Enrollment.find({ course: id })
+      .populate('student', 'name email')
+      .populate('course', 'title');
+
+    res.json({ enrollments });
+  } catch (err) {
+    res.status(500).json({ message: 'Unable to load enrollments' });
+  }
+});
 export default router;

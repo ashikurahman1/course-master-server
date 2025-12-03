@@ -11,7 +11,6 @@ router.get('/profile', protect, studentOnly, (req, res) => {
   });
 });
 
-// Example: enroll course
 router.post('/enroll', protect, studentOnly, (req, res) => {
   res.json({
     message: 'Course enrollment successful!',
