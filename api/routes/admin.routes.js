@@ -14,24 +14,24 @@ router.get('/dashboard', protect, adminOnly, (req, res) => {
 
 router.post('/create-course', protect, adminOnly, async (req, res) => {
   try {
-    const { title, description, price, duration, category, syllabus, image } =
-      req.body;
+    const courseData = req.body;
 
-    // Instructor is current logged-in user
-    const instructor = req.user._id;
+    const instructor = {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      avatar: req.user.avatar,
+    };
 
-    const course = await Course.create({
-      title,
-      description,
-      price,
-      image,
-      duration,
-      category,
-      syllabus,
+    const newCourse = new Course({
+      ...courseData,
       instructor,
     });
+    await newCourse.save();
 
-    res.status(201).json({ message: 'Course created successfully!', course });
+    res
+      .status(201)
+      .json({ message: 'Course created successfully!', course: newCourse });
   } catch (error) {
     console.error(error);
     res
