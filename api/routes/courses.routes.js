@@ -51,6 +51,23 @@ router.get('/courses', async (req, res) => {
   }
 });
 
+router.get('/courses/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const course = await Course.findById(id);
+
+    if (!course) {
+      return res.status(404).json({ message: 'Course not found' });
+    }
+    res.status(200).json({ course });
+  } catch (error) {
+    console.error('Get course error', error);
+    res
+      .status(500)
+      .json({ message: 'Failed to get course', error: error.message });
+  }
+});
+
 router.get('/courses/featured', async (req, res) => {
   try {
     const featuredCourses = await Course.find()
