@@ -49,6 +49,18 @@ const courseSchema = new mongoose.Schema(
       email: { type: String, required: true },
       avatar: { type: String, required: true },
     },
+    batches: [
+      {
+        name: { type: String, required: true },
+        startDate: { type: Date, required: true },
+        endDate: { type: Date },
+        status: {
+          type: String,
+          enum: ['upcoming', 'ongoing', 'completed'],
+          default: 'ongoing',
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
