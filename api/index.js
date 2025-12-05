@@ -40,6 +40,14 @@ app.use('/api/student', studentRoutes);
 
 app.use('/api', coursesRoutes);
 app.use('/api', enrollmentRoutes);
+
+app.get('/', (req, res) => {
+  res.send({
+    message:
+      "Welcome to Course Master API! Don't get lost in the code jungle 🐒",
+  });
+});
+
 app.listen(port, () => {
   console.log(`Course Master is Running on port ${port}`);
 });
