@@ -3,6 +3,7 @@
 ## Screenshots
 
 ![CourseMaster Screenshot](https://raw.githubusercontent.com/ashikurahman1/course-master/refs/heads/main/public/course-master-black.vercel.app_.png)
+![CourseMaster Dashboard](https://raw.githubusercontent.com/ashikurahman1/course-master/refs/heads/main/public/course-master-black.vercel.app_dashboard.png)
 
 ## Overview
 
