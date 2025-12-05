@@ -22,6 +22,21 @@ const enrollmentSchema = new mongoose.Schema(
       default: 'active',
     },
     completedModules: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Module' }],
+
+    assignments: [
+      {
+        module: { type: mongoose.Schema.Types.ObjectId, ref: 'Module' },
+        answer: { type: String },
+        submittedAt: { type: Date, default: Date.now },
+      },
+    ],
+    quizzes: [
+      {
+        module: { type: mongoose.Schema.Types.ObjectId, ref: 'Module' },
+        score: { type: Number },
+        submittedAt: { type: Date, default: Date.now },
+      },
+    ],
   },
   { timestamps: true }
 );

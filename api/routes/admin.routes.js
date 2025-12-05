@@ -1,8 +1,10 @@
 import express from 'express';
 import { protect, adminOnly } from '../middleware/auth.middleware.js';
 import Course from '../models/course.model.js';
-import Enrollment from '../models/enrollment.model.js';
+
 import User from '../models/user.model.js';
+
+import Enrollment from '../models/enrollment.model.js';
 const router = express.Router();
 
 router.post('/create-course', protect, adminOnly, async (req, res) => {
@@ -120,4 +122,68 @@ router.get('/dashboard', protect, adminOnly, async (req, res) => {
   }
 });
 
+router.get('/enrollments', protect, adminOnly, async (req, res) => {
+  try {
+    const { courseId, batch } = req.query;
+    const filter = {};
+
+    if (courseId) filter.course = courseId;
+    if (batch) filter.batch = { $regex: batch, $options: 'i' };
+
+    const enrollments = await Enrollment.find(filter)
+      .populate('student', 'name email')
+      .populate('course', 'title');
+
+    res.json({ enrollments });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch enrollments' });
+  }
+});
+
+router.get('/assignments/submissions', protect, adminOnly, async (req, res) => {
+  try {
+    const { courseId, batch, student } = req.query;
+
+    const filter = {};
+    if (courseId) filter.course = courseId;
+    if (batch) filter.batch = { $regex: batch, $options: 'i' };
+
+    // Find students matching search if student filter is provided
+    let studentIds = [];
+    if (student) {
+      const users = await User.find({
+        $or: [
+          { name: { $regex: student, $options: 'i' } },
+          { email: { $regex: student, $options: 'i' } },
+        ],
+      }).select('_id');
+
+      studentIds = users.map(u => u._id);
+      filter.student = { $in: studentIds };
+    }
+
+    // Get enrollments that match the filter
+    const enrollments = await Enrollment.find(filter)
+      .populate('student', 'name email')
+      .populate('course', 'title');
+
+    // Flatten assignments from enrollments
+    const submissions = enrollments.flatMap(enroll =>
+      (enroll.assignments || []).map(a => ({
+        _id: a._id,
+        student: enroll.student,
+        course: enroll.course,
+        batch: enroll.batch,
+        submittedAt: a.submittedAt,
+        answer: a.answer,
+      }))
+    );
+
+    res.json({ submissions });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch submissions' });
+  }
+});
 export default router;
