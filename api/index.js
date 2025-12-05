@@ -10,7 +10,7 @@ import authRoutes from './routes/auth.routes.js';
 import coursesRoutes from './routes/courses.routes.js';
 import enrollmentRoutes from './routes/enrollment.route.js';
 const app = express();
-const port = 3000;
+// const port = 3000;
 
 // midleware
 app.use(
@@ -48,6 +48,6 @@ app.get('/', (req, res) => {
   });
 });
 
-app.listen(port, () => {
-  console.log(`Course Master is Running on port ${port}`);
-});
+// app.listen(port, () => {
+  // console.log(`Course Master is Running on port ${port}`);
+ // });
