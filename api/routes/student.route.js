@@ -1,8 +1,9 @@
 import express from 'express';
+const router = express.Router();
 import { protect, studentOnly } from '../middleware/auth.middleware.js';
 import Enrollment from '../models/enrollment.model.js';
 import Course from '../models/course.model.js';
-const router = express.Router();
+import mongoose from 'mongoose';
 
 // Example Student Route
 router.get('/profile', protect, studentOnly, (req, res) => {
@@ -26,19 +27,18 @@ router.post(
   async (req, res) => {
     try {
       const { courseId, moduleId } = req.params;
-      const studentId = req.user._id;
 
       const enrollment = await Enrollment.findOne({
-        student: studentId,
+        student: req.user._id,
         course: courseId,
       });
+
       if (!enrollment)
         return res.status(404).json({ message: 'Enrollment not found' });
 
       if (!enrollment.completedModules.includes(moduleId)) {
         enrollment.completedModules.push(moduleId);
 
-        // update progress
         const course = await Course.findById(courseId);
         const totalModules = course.modules.length;
         enrollment.progress = Math.round(
@@ -53,7 +53,6 @@ router.post(
         progress: enrollment.progress,
       });
     } catch (err) {
-      console.log(err);
       res.status(500).json({ message: 'Failed to update progress' });
     }
   }
@@ -66,23 +65,22 @@ router.get(
   async (req, res) => {
     try {
       const { courseId } = req.params;
-      const studentId = req.user._id;
 
-      const course = await Course.findById(courseId);
-      if (!course) return res.status(404).json({ message: 'Course not found' });
-
-      const enrollment = await Enrollment.findOne({
-        student: studentId,
+      let enrollment = await Enrollment.findOne({
+        student: req.user._id,
         course: courseId,
-      });
-      if (!enrollment)
-        return res.status(404).json({ message: 'Enrollment not found' });
+      }).populate('course');
 
-      res.json({ course, enrollment });
+      if (!enrollment) {
+        return res.status(404).json({ message: 'Enrollment not found' });
+      }
+
+      res.json({ course: enrollment.course, enrollment });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       res.status(500).json({ message: 'Failed to fetch course consumption' });
     }
   }
 );
+
 export default router;

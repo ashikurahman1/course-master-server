@@ -13,18 +13,24 @@ const app = express();
 const port = 3000;
 
 // midleware
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
-// MongoDB
+// MongoDB Connection
+mongoose.connection.on('connected', () => console.log('MongoDB OK'));
+mongoose.connection.on('error', err => console.log('MongoDB Error:', err));
+
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch(error => {
-    console.log(error);
-  });
+  .then(() => console.log('Database Connected Successfully'))
+  .catch(err => console.log('MongoDB connection error:', err));
 
 // Routes
 app.use('/api/auth', authRoutes);

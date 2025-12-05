@@ -21,7 +21,7 @@ const enrollmentSchema = new mongoose.Schema(
       enum: ['pending', 'active', 'completed'],
       default: 'active',
     },
-    completedLessons: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }],
+    completedModules: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Module' }],
   },
   { timestamps: true }
 );
